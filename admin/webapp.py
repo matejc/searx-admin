@@ -3,7 +3,7 @@ from os.path import isfile
 
 from flask import Flask, render_template, request, redirect, url_for
 from flask_mail import Mail
-from flask_security import Security, SQLAlchemySessionUserDatastore, login_required
+from flask_security import Security, SQLAlchemySessionUserDatastore, login_required, user_registered
 
 from config import configuration
 from database import db_session, init_db
@@ -15,17 +15,15 @@ app = Flask(__name__)
 app.secret_key = configuration['app']['secretkey']
 
 app.config['SECURITY_PASSWORD_SALT'] = configuration['app']['secretkey']
-
-app.config['MAIL_SERVER'] = configuration['mail']['server']
-app.config['MAIL_PORT'] = configuration['mail']['port']
-app.config['MAIL_USE_SSL'] = configuration['mail']['use_ssl']
-app.config['MAIL_USERNAME'] = configuration['mail']['user']
-app.config['MAIL_PASSWORD'] = configuration['mail']['password']
+app.config['SECURITY_REGISTERABLE'] = True
+app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
+app.config['SECURITY_CHANGEABLE'] = True
 
 mail = Mail(app)
 user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
 security = Security(app, user_datastore)
 instance = Searx(**configuration['searx'])
+is_db_missing = True
 
 
 def render(template_name, **kwargs):
@@ -33,14 +31,19 @@ def render(template_name, **kwargs):
     return render_template(template_name, **kwargs)
 
 
-@app.before_first_request
+@app.before_request
 def _create_db_if_missing():
-    try:
-        User.query.first()
-    except:
+    global is_db_missing
+    print('------------------')
+    print(is_db_missing)
+    print('------------------')
+    if is_db_missing:
+        print('------------------')
+        print('db inited')
+        print('------------------')
         init_db()
-        user_datastore.create_user(email='admin@localhost', password='password')
-        db_session.commit()
+        is_db_missing = False
+        return redirect(url_for('security.register'))
 
 
 @app.route('/')
@@ -169,8 +172,21 @@ def reload_instance():
     return redirect(url_for('index'))
 
 
+def _check_db():
+    global is_db_missing
+    print(is_db_missing)
+    try:
+        print('44444444444444444444444444444444444444444')
+        User.query.first()
+        print('44444444444444444444444444444444444444444')
+        is_db_missing = False
+    except:
+        print('baaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+        pass
+
 
 def run():
+    _check_db()
     with instance:
         app.run(port=configuration['app']['port'],
                 debug=False)
