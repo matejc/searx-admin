@@ -28,3 +28,22 @@ Edit `admin/config.yml`
 source venv/bin/activate
 python admin/webapp.py
 ```
+
+
+## Docker
+
+Searx and Searx-admin
+
+### Build
+
+```
+docker build . -t searx
+```
+
+### Run
+
+Example
+
+```
+docker run -p 8889:8889 -p 8888:8888 -p 7777:7777 -v /var/lib/searx:/var/lib/searx -ti searx
+```

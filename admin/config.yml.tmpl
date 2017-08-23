@@ -1,0 +1,17 @@
+app:
+    port: {{ default .Env.APP_PORT "8889" }}
+    bind_address: {{ default .Env.APP_BIND_ADDRESS "0.0.0.0" }}
+    secretkey: {{ default .Env.APP_SECRETKEY "my-dirty-secret" }}
+    database_connection_string: {{ default .Env.APP_DATABASE_CONNECTION_STRING "sqlite:////tmp/users.db" }}
+    data_path: {{ default .Env.APP_DATA_PATH "False" }}
+
+mail:
+    server: {{ default .Env.MAIL_SERVER "smtp.localhost" }}
+    port: {{ default .Env.MAIL_PORT "465" }}
+    use_ssl: {{ default .Env.MAIL_USE_SSL "True" }}
+    user: {{ default .Env.MAIL_USER "mail" }}
+    password: {{ default .Env.MAIL_PASSWORD "password" }}
+
+searx:
+    root: {{ default .Env.SEARX_ROOT "/usr/local/searx" }}
+    uwsgi_extra_args: {{ default .Env.SEARX_UWSGI_EXTRA_ARGS "['--venv', 'env']" }}

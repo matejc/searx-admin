@@ -208,7 +208,7 @@ def run():
     init_db()
     _check_db()
     with instance:
-        app.run(port=configuration['app']['port'], debug=False)
+        app.run(host=configuration['app']['bind_address'], port=configuration['app']['port'], debug=False)
 
 
 if __name__ == '__main__':

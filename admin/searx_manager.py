@@ -19,7 +19,7 @@ from searx import autocomplete
 
 BASE_DIR = abspath(dirname(__file__))
 REFERENCE_SETTINGS_PATH = join(BASE_DIR, 'reference_settings.yml')
-EDITABLE_SETTINGS_PATH = join(BASE_DIR, 'searx_generated_settings.yml')
+EDITABLE_SETTINGS_PATH = join(configuration['app']['data_path'] or BASE_DIR, 'searx_generated_settings.yml')
 UWSGI_CONFIG_PATH = join(BASE_DIR, 'searx_uwsgi.ini')
 UWSGI_INI_TPL = '''
 [uwsgi]
